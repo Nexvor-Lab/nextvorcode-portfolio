@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { useState, useEffect } from "react";
+import logoIcon from "@/assets/logo_dark_icon.png";
 
 const links = [
   { href: "#services", label: "Services" },
@@ -27,12 +28,18 @@ export function Nav() {
     >
       <div className={`mx-auto max-w-7xl px-6 transition-all ${scrolled ? "scale-95" : ""}`}>
         <div className={`flex items-center justify-between ${scrolled ? "glass rounded-full px-6 py-3" : ""}`}>
-          <a href="#top" className="flex items-center gap-2 group">
-            <div className="relative">
-              <div className="h-8 w-8 rounded-lg bg-gradient-primary shadow-glow group-hover:scale-110 transition-transform" />
-              <div className="absolute inset-0 h-8 w-8 rounded-lg bg-gradient-primary blur-md opacity-60 animate-glow-pulse" />
+          <a href="#top" className="flex items-center gap-2.5 group">
+            <div className="relative flex items-center justify-center">
+              <img
+                src={logoIcon}
+                alt="Nexvor Code Labs Logo"
+                className="h-8 w-auto relative z-10 group-hover:scale-110 transition-transform duration-300"
+              />
+              <div className="absolute -inset-1 rounded-full bg-primary/25 blur-md opacity-60 animate-glow-pulse z-0" />
             </div>
-            <span className="font-display font-bold text-xl tracking-tight">Nexvor</span>
+            <span className="font-display font-bold text-xl tracking-tight text-foreground group-hover:text-primary transition-colors">
+              Nexvor
+            </span>
           </a>
           <nav className="hidden md:flex items-center gap-1">
             {links.map((l) => (

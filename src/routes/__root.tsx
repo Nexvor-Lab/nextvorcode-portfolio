@@ -73,21 +73,37 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Nexvor — Full-stack engineering studio" },
+      { title: "Nexvor Codelabs | Full-Stack Software Engineering & CS Projects" },
       {
         name: "description",
         content:
-          "Nexvor is a senior-founder engineering studio building web platforms, mobile apps, AI/ML systems and automation pipelines.",
+          "Nexvor Codelabs is a premier software engineering studio building web pages, mobile apps, and custom platforms. We write high-quality React, NextJS, NestJS, Node.js, Flutter, and Spring Boot code. We also offer expert development support for university assignments and final year projects.",
       },
-      { name: "author", content: "Nexvor" },
-      { property: "og:title", content: "Nexvor — Full-stack engineering studio" },
+      {
+        name: "keywords",
+        content:
+          "final projects, assignments doing, university assignments doing, web pages create, react, next, flutter, springboot, node.js, nextjs, nest.js, computer science assignments, coding help, app development, software engineering studio",
+      },
+      { name: "author", content: "Nexvor Codelabs" },
+      { property: "og:title", content: "Nexvor Codelabs | Full-Stack Software Engineering & CS Projects" },
       {
         property: "og:description",
-        content: "Senior-founder engineering studio building high-performance systems.",
+        content:
+          "Nexvor Codelabs builds high-performance web pages, mobile apps, and custom software. Expert support for React, NextJS, Node.js, NestJS, Flutter, Spring Boot, university assignments, and final projects.",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { property: "og:image", content: "https://nexvorcodelabs.me/og-image.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Nexvor" },
+      { name: "twitter:title", content: "Nexvor Codelabs | Full-Stack Software Engineering & CS Projects" },
+      {
+        name: "twitter:description",
+        content:
+          "High-performance web pages, mobile apps, and custom software. Expert support for React, NextJS, NestJS, Flutter, Spring Boot, university assignments, and final projects.",
+      },
+      { name: "twitter:image", content: "https://nexvorcodelabs.me/og-image.png" },
     ],
     links: [
       {

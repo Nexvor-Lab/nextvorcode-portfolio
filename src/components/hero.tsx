@@ -1,14 +1,16 @@
 import { motion } from "motion/react";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 // client-only loader for Prism
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ClientPrism = (props: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [PrismComp, setPrismComp] = useState<any>(null);
   useEffect(() => {
     let mounted = true;
-    import('./Prism').then((m) => {
+    import("./Prism").then((m) => {
       if (mounted) setPrismComp(() => m.default);
     });
     return () => {
@@ -21,7 +23,10 @@ const ClientPrism = (props: any) => {
 
 export function Hero() {
   return (
-    <section id="top" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20">
+    <section
+      id="top"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20"
+    >
       {/* Background layers */}
       <div className="absolute inset-0 -z-10">
         <img
@@ -37,7 +42,7 @@ export function Hero() {
 
       {/* Prism background (client only) */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+        <div style={{ width: "100%", height: "100%", position: "relative" }}>
           <ClientPrism
             animationType="3drotate"
             timeScale={0.4}
@@ -48,13 +53,17 @@ export function Hero() {
             Noice={0}
             hueShift={-0.7}
             colorFrequency={1}
+            suspendWhenOffscreen={true}
           />
         </div>
       </div>
 
       {/* Floating aurora blobs */}
       <div className="absolute top-1/4 -left-32 h-96 w-96 rounded-full bg-primary/30 blur-3xl animate-aurora -z-10" />
-      <div className="absolute bottom-1/4 -right-32 h-96 w-96 rounded-full bg-secondary/30 blur-3xl animate-aurora -z-10" style={{ animationDelay: "2s" }} />
+      <div
+        className="absolute bottom-1/4 -right-32 h-96 w-96 rounded-full bg-secondary/30 blur-3xl animate-aurora -z-10"
+        style={{ animationDelay: "2s" }}
+      />
 
       <div className="mx-auto max-w-6xl px-6 text-center relative z-10">
         <motion.div
@@ -87,8 +96,8 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="mt-8 mx-auto max-w-2xl text-lg text-muted-foreground leading-relaxed"
         >
-          Nexvor is a two-founder engineering studio shipping web platforms, mobile apps,
-          AI/ML systems, and automation pipelines — end to end, production grade.
+          Nexvor is a two-founder engineering studio shipping web platforms, mobile apps, AI/ML
+          systems, and automation pipelines — end to end, production grade.
         </motion.p>
 
         <motion.div
@@ -126,7 +135,9 @@ export function Hero() {
           ].map((s) => (
             <div key={s.l} className="text-center">
               <div className="font-display text-3xl md:text-4xl font-bold text-gradient">{s.v}</div>
-              <div className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">{s.l}</div>
+              <div className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">
+                {s.l}
+              </div>
             </div>
           ))}
         </motion.div>

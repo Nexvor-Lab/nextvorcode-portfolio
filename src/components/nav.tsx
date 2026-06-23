@@ -27,7 +27,9 @@ export function Nav() {
       }`}
     >
       <div className={`mx-auto max-w-7xl px-6 transition-all ${scrolled ? "scale-95" : ""}`}>
-        <div className={`flex items-center justify-between ${scrolled ? "glass rounded-full px-6 py-3" : ""}`}>
+        <div
+          className={`flex items-center justify-between ${scrolled ? "glass rounded-full px-6 py-3" : ""}`}
+        >
           <a href="#top" className="flex items-center gap-2.5 group">
             <div className="relative flex items-center justify-center">
               <img

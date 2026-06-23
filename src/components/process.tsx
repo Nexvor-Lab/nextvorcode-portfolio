@@ -1,9 +1,21 @@
 import { motion } from "motion/react";
 
 const steps = [
-  { n: "01", t: "Discover", d: "We sit with the problem before the keyboard. Goals, constraints, edges." },
-  { n: "02", t: "Design", d: "Architecture, data flow, UI. Tight loops with you, no surprises later." },
-  { n: "03", t: "Build", d: "Two senior engineers shipping in parallel — frontend, backend, AI, infra." },
+  {
+    n: "01",
+    t: "Discover",
+    d: "We sit with the problem before the keyboard. Goals, constraints, edges.",
+  },
+  {
+    n: "02",
+    t: "Design",
+    d: "Architecture, data flow, UI. Tight loops with you, no surprises later.",
+  },
+  {
+    n: "03",
+    t: "Build",
+    d: "Two senior engineers shipping in parallel — frontend, backend, AI, infra.",
+  },
   { n: "04", t: "Launch", d: "Deploy, monitor, iterate. We stay around once it's live." },
 ];
 
@@ -18,7 +30,9 @@ export function Process() {
           transition={{ duration: 0.7 }}
           className="max-w-2xl mb-16"
         >
-          <div className="font-mono text-xs uppercase tracking-widest text-primary mb-4">// How we work</div>
+          <div className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
+            // How we work
+          </div>
           <h2 className="font-display text-4xl md:text-6xl font-bold leading-tight">
             A small team. <span className="text-gradient">Tight loops.</span>
           </h2>

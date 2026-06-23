@@ -1,11 +1,11 @@
-import { useEffect, useRef } from 'react';
-import { Renderer, Geometry, Program, Mesh } from 'ogl';
-import './Prism.css';
+import { useEffect, useRef } from "react";
+import { Renderer, Geometry, Program, Mesh } from "ogl";
+import "./Prism.css";
 
 const Prism = ({
   height = 3.5,
   baseWidth = 5.5,
-  animationType = 'rotate',
+  animationType = "rotate",
   glow = 1,
   offset = { x: 0, y: 0 },
   noise = 0.5,
@@ -16,15 +16,15 @@ const Prism = ({
   hoverStrength = 2,
   inertia = 0.05,
   bloom = 1,
-  suspendWhenOffscreen = false,
-  timeScale = 0.5
+  suspendWhenOffscreen = true,
+  timeScale = 0.5,
 }) => {
   const containerRef = useRef(null);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    console.debug('[Prism] mount', { container });
+    console.debug("[Prism] mount", { container });
 
     const H = Math.max(0.001, height);
     const BW = Math.max(0.001, baseWidth);
@@ -45,24 +45,26 @@ const Prism = ({
     const HOVSTR = Math.max(0, hoverStrength || 1);
     const INERT = Math.max(0, Math.min(1, inertia || 0.12));
 
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const isMobile =
+      typeof window !== "undefined" && /Mobi|Android|iPhone/i.test(navigator.userAgent);
+    const dpr = isMobile ? 0.75 : Math.min(1.0, window.devicePixelRatio || 1);
     const renderer = new Renderer({
       dpr,
       alpha: transparent,
-      antialias: false
+      antialias: false,
     });
     const gl = renderer.gl;
-    console.debug('[Prism] gl canvas', { width: gl.canvas.width, height: gl.canvas.height });
+    console.debug("[Prism] gl canvas", { width: gl.canvas.width, height: gl.canvas.height });
     gl.disable(gl.DEPTH_TEST);
     gl.disable(gl.CULL_FACE);
     gl.disable(gl.BLEND);
 
     Object.assign(gl.canvas.style, {
-      position: 'absolute',
-      inset: '0',
-      width: '100%',
-      height: '100%',
-      display: 'block'
+      position: "absolute",
+      inset: "0",
+      width: "100%",
+      height: "100%",
+      display: "block",
     });
     container.appendChild(gl.canvas);
 
@@ -160,7 +162,7 @@ const Prism = ({
           wob = mat2(c0, c1, c2, c0);
         }
 
-        const int STEPS = 100;
+        const int STEPS = 60;
         for (int i = 0; i < STEPS; i++) {
           p = vec3(f, z);
           p.xz = p.xz * wob;
@@ -194,8 +196,8 @@ const Prism = ({
     const geometry = new Geometry(gl, {
       position: {
         size: 2,
-        data: new Float32Array([-1, -1, 3, -1, -1, 3])
-      }
+        data: new Float32Array([-1, -1, 3, -1, -1, 3]),
+      },
     });
     const iResBuf = new Float32Array(2);
     const offsetPxBuf = new Float32Array(2);
@@ -223,17 +225,17 @@ const Prism = ({
         uInvHeight: { value: 1 / H },
         uMinAxis: { value: Math.min(BASE_HALF, H) },
         uPxScale: {
-          value: 1 / ((gl.drawingBufferHeight || 1) * 0.1 * SCALE)
+          value: 1 / ((gl.drawingBufferHeight || 1) * 0.1 * SCALE),
         },
-        uTimeScale: { value: TS }
-      }
+        uTimeScale: { value: TS },
+      },
     });
     const mesh = new Mesh(gl, { geometry, program });
 
     const resize = () => {
       const w = container.clientWidth || 1;
       const h = container.clientHeight || 1;
-      console.debug('[Prism] resize', { w, h });
+      console.debug("[Prism] resize", { w, h });
       renderer.setSize(w, h);
       iResBuf[0] = gl.drawingBufferWidth;
       iResBuf[1] = gl.drawingBufferHeight;
@@ -305,7 +307,7 @@ const Prism = ({
     const lerp = (a, b, t) => a + (b - a) * t;
 
     const pointer = { x: 0, y: 0, inside: true };
-    const onMove = e => {
+    const onMove = (e) => {
       const ww = Math.max(1, window.innerWidth);
       const wh = Math.max(1, window.innerHeight);
       const cx = ww * 0.5;
@@ -324,28 +326,28 @@ const Prism = ({
     };
 
     let onPointerMove = null;
-    if (animationType === 'hover') {
-      onPointerMove = e => {
+    if (animationType === "hover") {
+      onPointerMove = (e) => {
         onMove(e);
         startRAF();
       };
-      window.addEventListener('pointermove', onPointerMove, { passive: true });
-      window.addEventListener('mouseleave', onLeave);
-      window.addEventListener('blur', onBlur);
+      window.addEventListener("pointermove", onPointerMove, { passive: true });
+      window.addEventListener("mouseleave", onLeave);
+      window.addEventListener("blur", onBlur);
       program.uniforms.uUseBaseWobble.value = 0;
-    } else if (animationType === '3drotate') {
+    } else if (animationType === "3drotate") {
       program.uniforms.uUseBaseWobble.value = 0;
     } else {
       program.uniforms.uUseBaseWobble.value = 1;
     }
 
-    const render = t => {
+    const render = (t) => {
       const time = (t - t0) * 0.001;
       program.uniforms.iTime.value = time;
 
       let continueRAF = true;
 
-      if (animationType === 'hover') {
+      if (animationType === "hover") {
         const maxPitch = 0.6 * HOVSTR;
         const maxYaw = 0.6 * HOVSTR;
         targetYaw = (pointer.inside ? -pointer.x : 0) * maxYaw;
@@ -360,10 +362,12 @@ const Prism = ({
 
         if (NOISE_IS_ZERO) {
           const settled =
-            Math.abs(yaw - targetYaw) < 1e-4 && Math.abs(pitch - targetPitch) < 1e-4 && Math.abs(roll) < 1e-4;
+            Math.abs(yaw - targetYaw) < 1e-4 &&
+            Math.abs(pitch - targetPitch) < 1e-4 &&
+            Math.abs(roll) < 1e-4;
           if (settled) continueRAF = false;
         }
-      } else if (animationType === '3drotate') {
+      } else if (animationType === "3drotate") {
         const tScaled = time * TS;
         yaw = tScaled * wY;
         pitch = Math.sin(tScaled * wX + phX) * 0.6;
@@ -393,8 +397,8 @@ const Prism = ({
     };
 
     if (suspendWhenOffscreen) {
-      const io = new IntersectionObserver(entries => {
-        const vis = entries.some(e => e.isIntersecting);
+      const io = new IntersectionObserver((entries) => {
+        const vis = entries.some((e) => e.isIntersecting);
         if (vis) startRAF();
         else stopRAF();
       });
@@ -408,10 +412,10 @@ const Prism = ({
     return () => {
       stopRAF();
       ro.disconnect();
-      if (animationType === 'hover') {
-        if (onPointerMove) window.removeEventListener('pointermove', onPointerMove);
-        window.removeEventListener('mouseleave', onLeave);
-        window.removeEventListener('blur', onBlur);
+      if (animationType === "hover") {
+        if (onPointerMove) window.removeEventListener("pointermove", onPointerMove);
+        window.removeEventListener("mouseleave", onLeave);
+        window.removeEventListener("blur", onBlur);
       }
       if (suspendWhenOffscreen) {
         const io = container.__prismIO;
@@ -436,7 +440,7 @@ const Prism = ({
     hoverStrength,
     inertia,
     bloom,
-    suspendWhenOffscreen
+    suspendWhenOffscreen,
   ]);
 
   return <div className="prism-container" ref={containerRef} />;

@@ -1,11 +1,29 @@
 import { motion } from "motion/react";
 
 const stack = [
-  "React", "Next.js", "Angular", "Flutter", "Dart", "Kotlin",
-  "NestJS", "Express", "Spring Boot", "FastAPI", ".NET / C#",
-  "Python", "TypeScript", "Tailwind", "MUI",
-  "PostgreSQL", "MongoDB", "Redis",
-  "AWS", "Docker", "n8n", "AI / ML", "LangChain",
+  "React",
+  "Next.js",
+  "Angular",
+  "Flutter",
+  "Dart",
+  "Kotlin",
+  "NestJS",
+  "Express",
+  "Spring Boot",
+  "FastAPI",
+  ".NET / C#",
+  "Python",
+  "TypeScript",
+  "Tailwind",
+  "MUI",
+  "PostgreSQL",
+  "MongoDB",
+  "Redis",
+  "AWS",
+  "Docker",
+  "n8n",
+  "AI / ML",
+  "LangChain",
 ];
 
 export function Stack() {
@@ -22,12 +40,15 @@ export function Stack() {
           transition={{ duration: 0.7 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <div className="font-mono text-xs uppercase tracking-widest text-primary mb-4">// The stack</div>
+          <div className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
+            // The stack
+          </div>
           <h2 className="font-display text-4xl md:text-6xl font-bold leading-tight">
             Tools we wield, <span className="text-gradient">fluently</span>.
           </h2>
           <p className="mt-5 text-muted-foreground">
-            We pick the right tech per problem — not per trend. Below is a slice of what we work with daily.
+            We pick the right tech per problem — not per trend. Below is a slice of what we work
+            with daily.
           </p>
         </motion.div>
       </div>
@@ -48,7 +69,10 @@ export function Stack() {
           ))}
         </div>
 
-        <div className="flex gap-4 animate-marquee w-max mt-4" style={{ animationDirection: "reverse", animationDuration: "40s" }}>
+        <div
+          className="flex gap-4 animate-marquee w-max mt-4"
+          style={{ animationDirection: "reverse", animationDuration: "40s" }}
+        >
           {row.map((t, i) => (
             <div
               key={`r-${t}-${i}`}

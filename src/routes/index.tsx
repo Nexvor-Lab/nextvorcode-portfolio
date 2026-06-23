@@ -20,14 +20,20 @@ export const Route = createFileRoute("/")({
         content:
           "final projects, assignments doing, university assignments doing, web pages create, react, next, flutter, springboot, node.js, nextjs, nest.js, computer science assignments, coding help, software studio, freelance developers",
       },
-      { property: "og:title", content: "Nexvor Codelabs | Software Engineering & Academic CS Projects" },
+      {
+        property: "og:title",
+        content: "Nexvor Codelabs | Software Engineering & Academic CS Projects",
+      },
       {
         property: "og:description",
         content:
           "High-performance web pages, mobile apps, and custom systems. React, NextJS, Node.js, NestJS, Flutter, and Spring Boot. Expert help for final projects and university assignments.",
       },
       { property: "og:image", content: "https://nexvorcodelabs.me/og-image.png" },
-      { name: "twitter:title", content: "Nexvor Codelabs | Software Engineering & Academic CS Projects" },
+      {
+        name: "twitter:title",
+        content: "Nexvor Codelabs | Software Engineering & Academic CS Projects",
+      },
       {
         name: "twitter:description",
         content:

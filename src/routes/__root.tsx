@@ -9,7 +9,6 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import logoFavicon from "@/assets/logo_dark_icon.png";
 
 function NotFoundComponent() {
   return (
@@ -85,7 +84,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "final projects, assignments doing, university assignments doing, web pages create, react, next, flutter, springboot, node.js, nextjs, nest.js, computer science assignments, coding help, app development, software engineering studio",
       },
       { name: "author", content: "Nexvor Codelabs" },
-      { property: "og:title", content: "Nexvor Codelabs | Full-Stack Software Engineering & CS Projects" },
+      {
+        property: "og:title",
+        content: "Nexvor Codelabs | Full-Stack Software Engineering & CS Projects",
+      },
       {
         property: "og:description",
         content:
@@ -97,7 +99,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Nexvor" },
-      { name: "twitter:title", content: "Nexvor Codelabs | Full-Stack Software Engineering & CS Projects" },
+      {
+        name: "twitter:title",
+        content: "Nexvor Codelabs | Full-Stack Software Engineering & CS Projects",
+      },
       {
         name: "twitter:description",
         content:
@@ -113,7 +118,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "icon",
         type: "image/png",
-        href: logoFavicon,
+        href: "/favicon.png",
+      },
+      {
+        rel: "icon",
+        type: "image/x-icon",
+        href: "/favicon.ico",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/apple-touch-icon.png",
       },
     ],
   }),

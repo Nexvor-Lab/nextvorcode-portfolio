@@ -51,7 +51,9 @@ export function Services() {
           transition={{ duration: 0.7 }}
           className="max-w-2xl mb-16"
         >
-          <div className="font-mono text-xs uppercase tracking-widest text-primary mb-4">// What we ship</div>
+          <div className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
+            // What we ship
+          </div>
           <h2 className="font-display text-4xl md:text-6xl font-bold leading-tight">
             One studio. <span className="text-gradient">Every layer</span> of your product.
           </h2>
@@ -76,7 +78,10 @@ export function Services() {
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
                 <div className="mt-5 flex flex-wrap gap-2">
                   {s.tags.map((t) => (
-                    <span key={t} className="font-mono text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-muted/60 text-muted-foreground border border-border">
+                    <span
+                      key={t}
+                      className="font-mono text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-muted/60 text-muted-foreground border border-border"
+                    >
                       {t}
                     </span>
                   ))}

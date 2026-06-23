@@ -7,7 +7,7 @@ const menuItems = [
   { type: "hash", target: "services", label: "Services" },
   { type: "hash", target: "stack", label: "Stack" },
   { type: "hash", target: "process", label: "Process" },
-  { type: "route", target: "/projects", label: "Projects" },
+  // { type: "route", target: "/projects", label: "Projects" },
   { type: "route", target: "/blog", label: "Blog" },
 ];
 

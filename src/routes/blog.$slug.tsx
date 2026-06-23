@@ -1,13 +1,74 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Nav } from "@/components/nav";
 import { Contact } from "@/components/contact";
-import { BLOG_POSTS } from "@/lib/data/blog";
+import { BLOG_POSTS, BlogPost } from "@/lib/data/blog";
 import { motion, useScroll, useSpring } from "motion/react";
 import { Calendar, Clock, ArrowLeft, ArrowRight, User } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+
+interface ApiPost {
+  id: number;
+  title: string;
+  slug: string;
+  snippet: string;
+  content: string;
+  category: string;
+  read_time: string;
+  created_at: string;
+  likes: number;
+}
+
+const mapApiPostToBlogPost = (post: ApiPost): BlogPost => {
+  let formattedDate = "";
+  try {
+    const d = new Date(post.created_at);
+    formattedDate = d.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  } catch (e) {
+    formattedDate = post.created_at || "";
+  }
+
+  return {
+    slug: post.slug,
+    title: post.title,
+    date: formattedDate,
+    readTime: post.read_time || "2 min read",
+    category: post.category || "Technology",
+    snippet: post.snippet || "",
+    author: {
+      name: "Nexvor Team",
+      role: "Core Engineers",
+    },
+    content: post.content || "",
+  };
+};
 
 export const Route = createFileRoute("/blog/$slug")({
-  head: ({ params }) => {
-    const post = BLOG_POSTS.find((p) => p.slug === params.slug);
+  loader: async ({ params }) => {
+    const { slug } = params;
+    try {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), 6000); // 6s timeout
+      const res = await fetch(
+        `https://nexvorcodelabs-blog-backend.onrender.com/api/posts/${slug}`,
+        {
+          signal: controller.signal,
+        },
+      );
+      clearTimeout(id);
+      if (!res.ok) throw new Error("Failed to fetch");
+      const apiPost = await res.json();
+      return mapApiPostToBlogPost(apiPost);
+    } catch (err) {
+      console.error("Failed to fetch blog post:", err);
+      return null;
+    }
+  },
+  head: ({ loaderData }) => {
+    const post = loaderData;
     return {
       meta: [
         { title: `${post?.title || "Blog Post"} | Nexvor Blog` },
@@ -22,8 +83,8 @@ export const Route = createFileRoute("/blog/$slug")({
 });
 
 function BlogPostDetailPage() {
+  const post = Route.useLoaderData();
   const { slug } = Route.useParams();
-  const post = BLOG_POSTS.find((p) => p.slug === slug);
 
   // Setup scroll progress indicator
   const { scrollYProgress } = useScroll();
@@ -31,6 +92,30 @@ function BlogPostDetailPage() {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001,
+  });
+
+  // Fetch all posts for recommended articles list
+  const { data: allPostsData } = useQuery({
+    queryKey: ["blogPosts"],
+    queryFn: async () => {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), 6000); // 6s timeout
+      try {
+        const res = await fetch("https://nexvorcodelabs-blog-backend.onrender.com/api/posts", {
+          signal: controller.signal,
+        });
+        clearTimeout(id);
+        if (!res.ok) throw new Error("Failed to fetch");
+        const json = await res.json();
+        return (Array.isArray(json) ? json : json?.value || []) as ApiPost[];
+      } catch (err) {
+        clearTimeout(id);
+        throw err;
+      }
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes cache
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 
   if (!post) {
@@ -53,7 +138,10 @@ function BlogPostDetailPage() {
   }
 
   // Get other blog posts to recommend at the bottom
-  const relatedPosts = BLOG_POSTS.filter((p) => p.slug !== slug).slice(0, 2);
+  const apiPosts = allPostsData || [];
+  const postsToFilter = apiPosts.map(mapApiPostToBlogPost);
+
+  const relatedPosts = postsToFilter.filter((p) => p.slug !== slug).slice(0, 2);
 
   return (
     <main className="relative min-h-screen bg-background text-foreground overflow-hidden">

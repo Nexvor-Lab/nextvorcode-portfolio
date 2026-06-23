@@ -1,9 +1,99 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Nav } from "@/components/nav";
 import { Contact } from "@/components/contact";
-import { BLOG_POSTS } from "@/lib/data/blog";
+import { BLOG_POSTS, BlogPost } from "@/lib/data/blog";
 import { motion } from "motion/react";
 import { Calendar, Clock, ArrowRight, BookOpen, Sparkles } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+
+interface ApiPost {
+  id: number;
+  title: string;
+  slug: string;
+  snippet: string;
+  content: string;
+  category: string;
+  read_time: string;
+  created_at: string;
+  likes: number;
+}
+
+const mapApiPostToBlogPost = (post: ApiPost): BlogPost => {
+  let formattedDate = "";
+  try {
+    const d = new Date(post.created_at);
+    formattedDate = d.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  } catch (e) {
+    formattedDate = post.created_at || "";
+  }
+
+  return {
+    slug: post.slug,
+    title: post.title,
+    date: formattedDate,
+    readTime: post.read_time || "2 min read",
+    category: post.category || "Technology",
+    snippet: post.snippet || "",
+    author: {
+      name: "Nexvor Team",
+      role: "Core Engineers",
+    },
+    content: post.content || "",
+  };
+};
+
+function BlogSkeleton() {
+  return (
+    <div className="space-y-12">
+      {/* Featured Post Skeleton */}
+      <section className="px-6 pb-12 max-w-7xl mx-auto relative z-10 pt-36">
+        <div className="glass rounded-2xl p-8 md:p-12 animate-pulse space-y-6">
+          <div className="h-6 w-32 bg-muted/60 rounded-full" />
+          <div className="space-y-3">
+            <div className="h-10 md:h-12 w-3/4 bg-muted/60 rounded-lg" />
+            <div className="h-10 md:h-12 w-1/2 bg-muted/60 rounded-lg" />
+          </div>
+          <div className="space-y-2">
+            <div className="h-4 w-full bg-muted/40 rounded" />
+            <div className="h-4 w-5/6 bg-muted/40 rounded" />
+          </div>
+          <div className="pt-6 border-t border-border/40 flex gap-4">
+            <div className="h-4 w-24 bg-muted/40 rounded" />
+            <div className="h-4 w-24 bg-muted/40 rounded" />
+          </div>
+        </div>
+      </section>
+
+      {/* Grid Skeleton */}
+      <section className="px-6 py-12 max-w-7xl mx-auto relative z-10">
+        <div className="h-8 w-48 bg-muted/60 rounded mb-8 animate-pulse" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {[1, 2].map((i) => (
+            <div key={i} className="glass rounded-2xl p-8 animate-pulse space-y-6">
+              <div className="h-4 w-20 bg-muted/60 rounded-full" />
+              <div className="h-6 w-3/4 bg-muted/60 rounded" />
+              <div className="space-y-2">
+                <div className="h-4 w-full bg-muted/40 rounded" />
+                <div className="h-4 w-5/6 bg-muted/40 rounded" />
+              </div>
+              <div className="pt-6 border-t border-border/40 flex justify-between items-center">
+                <div className="space-y-2">
+                  <div className="h-3 w-20 bg-muted/40 rounded" />
+                  <div className="h-3 w-16 bg-muted/40 rounded" />
+                </div>
+                <div className="h-8 w-16 bg-muted/60 rounded-full" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/blog")({
   head: () => ({
@@ -20,8 +110,83 @@ export const Route = createFileRoute("/blog")({
 });
 
 function BlogPage() {
-  // Let's take the first post as the featured post, and others as standard posts
-  const [featuredPost, ...standardPosts] = BLOG_POSTS;
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["blogPosts"],
+    queryFn: async () => {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), 6000); // 6s timeout
+      try {
+        const res = await fetch("https://nexvorcodelabs-blog-backend.onrender.com/api/posts", {
+          signal: controller.signal,
+        });
+        clearTimeout(id);
+        if (!res.ok) throw new Error("Failed to fetch");
+        const json = await res.json();
+        return (Array.isArray(json) ? json : json?.value || []) as ApiPost[];
+      } catch (err) {
+        clearTimeout(id);
+        throw err;
+      }
+    },
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
+
+  if (isLoading) {
+    return (
+      <main className="relative min-h-screen bg-background text-foreground overflow-hidden">
+        <Nav />
+        {/* Decorative Background Blobs */}
+        <div className="absolute top-24 left-1/3 h-80 w-80 rounded-full bg-secondary/10 blur-[100px] pointer-events-none -z-10" />
+        <div className="absolute top-48 right-1/4 h-96 w-96 rounded-full bg-primary/10 blur-[120px] pointer-events-none -z-10" />
+        <BlogSkeleton />
+        <Contact />
+      </main>
+    );
+  }
+
+  if (isError) {
+    return (
+      <main className="relative min-h-screen bg-background text-foreground overflow-hidden">
+        <Nav />
+        <div className="absolute top-24 left-1/3 h-80 w-80 rounded-full bg-secondary/10 blur-[100px] pointer-events-none -z-10" />
+        <div className="absolute top-48 right-1/4 h-96 w-96 rounded-full bg-primary/10 blur-[120px] pointer-events-none -z-10" />
+        <section className="pt-36 pb-20 px-6 text-center max-w-4xl mx-auto relative z-10">
+          <h2 className="font-display text-3xl font-bold text-gradient mb-4">
+            Failed to load articles
+          </h2>
+          <p className="text-muted-foreground">
+            The blog backend is currently offline. Please refresh or check back in a few moments.
+          </p>
+        </section>
+        <Contact />
+      </main>
+    );
+  }
+
+  const postsToRender = (data || []).map(mapApiPostToBlogPost);
+
+  if (postsToRender.length === 0) {
+    return (
+      <main className="relative min-h-screen bg-background text-foreground overflow-hidden">
+        <Nav />
+        <div className="absolute top-24 left-1/3 h-80 w-80 rounded-full bg-secondary/10 blur-[100px] pointer-events-none -z-10" />
+        <div className="absolute top-48 right-1/4 h-96 w-96 rounded-full bg-primary/10 blur-[120px] pointer-events-none -z-10" />
+        <section className="pt-36 pb-20 px-6 text-center max-w-4xl mx-auto relative z-10">
+          <h2 className="font-display text-3xl font-bold text-gradient mb-4">
+            No publications found
+          </h2>
+          <p className="text-muted-foreground">
+            Check back soon for new technical write-ups and engineering insights.
+          </p>
+        </section>
+        <Contact />
+      </main>
+    );
+  }
+
+  // Take the first post as the featured post, and others as standard posts (max 5 posts total)
+  const [featuredPost, ...standardPosts] = postsToRender.slice(0, 5);
 
   return (
     <main className="relative min-h-screen bg-background text-foreground overflow-hidden">
@@ -81,9 +246,7 @@ function BlogPage() {
               </span>
 
               <h2 className="font-display text-3xl md:text-5xl font-bold leading-tight hover:text-primary transition-colors">
-                <Link to="/blog/$slug" params={{ slug: featuredPost.slug }}>
-                  {featuredPost.title}
-                </Link>
+                <a href="https://blog.nexvorcodelabs.me/">{featuredPost.title}</a>
               </h2>
 
               <p className="text-muted-foreground leading-relaxed text-base">
@@ -104,14 +267,13 @@ function BlogPage() {
             </div>
 
             <div className="lg:col-span-5 flex flex-col justify-between items-start lg:items-end">
-              <Link
-                to="/blog/$slug"
-                params={{ slug: featuredPost.slug }}
+              <a
+                href="https://blog.nexvorcodelabs.me/"
                 className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-gradient-primary text-primary-foreground font-medium shadow-glow hover:shadow-glow-violet transition-all hover:scale-105"
               >
                 Read Article
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </a>
             </div>
           </motion.div>
         </section>
@@ -140,9 +302,7 @@ function BlogPage() {
                   </div>
 
                   <h4 className="font-display text-xl font-bold group-hover:text-primary transition-colors">
-                    <Link to="/blog/$slug" params={{ slug: post.slug }}>
-                      {post.title}
-                    </Link>
+                    <a href="https://blog.nexvorcodelabs.me/">{post.title}</a>
                   </h4>
 
                   <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
@@ -161,14 +321,13 @@ function BlogPage() {
                       {post.readTime}
                     </span>
                   </div>
-                  <Link
-                    to="/blog/$slug"
-                    params={{ slug: post.slug }}
+                  <a
+                    href="https://blog.nexvorcodelabs.me/"
                     className="inline-flex items-center gap-1 text-xs font-mono tracking-wider uppercase text-primary group-hover:text-foreground transition-colors"
                   >
                     Read
                     <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
+                  </a>
                 </div>
               </motion.article>
             ))}
